@@ -1,6 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./public/index.html", "./src/**/*.{html,js,ts}"],
+  content: [
+    "./src/index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./src/styles/**/*.css"
+  ],
 
   theme: {
     extend: {
@@ -18,8 +22,6 @@ module.exports = {
           stroke: "#D7D7D7", // Stroke
         },
       },
-
-      // config font
       fontFamily: {
         sans: ["Poppins", "sans-serif"],
       },

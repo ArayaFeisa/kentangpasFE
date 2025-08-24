@@ -1,27 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 body {
-  @apply bg-neutral-background text-neutral font-sans;
-}
-
-header {
-  @apply bg-primary text-neutral-background p-4 shadow-md;
-}
-
-nav ul {
-  @apply flex gap-4;
-}
-
-nav ul li a {
-  @apply text-neutral-background hover:text-primary-light transition-colors;
-}
-
-main {
-  @apply container mx-auto p-6;
-}
-
-button {
-  @apply bg-primary text-neutral-background px-4 py-2 rounded-lg shadow hover:bg-primary-dark transition;
+  @apply bg-red-500;
 }

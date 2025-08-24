@@ -1,3 +1,5 @@
+import "../../../styles/tailwind.css";
+
 class Home {
   render(): string {
     return `
