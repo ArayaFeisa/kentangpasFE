@@ -9,6 +9,7 @@ module.exports = {
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist'),
+    clean: true, // biar dist bersih setiap build
   },
   resolve: {
     extensions: ['.ts', '.js'],
@@ -19,6 +20,10 @@ module.exports = {
         test: /\.ts$/,
         exclude: /node_modules/,
         use: 'ts-loader',
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
