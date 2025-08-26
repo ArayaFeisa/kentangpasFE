@@ -1,6 +1,6 @@
-import Home from './pages/home/home';
 import "../styles/tailwind.css";
+import { router } from "./routes/router";
 
-const app = document.querySelector('#app') as HTMLElement;
-const homePage = new Home();
-app.innerHTML = homePage.render();
+// inisialisasi router
+window.addEventListener("load", router);
+window.addEventListener("hashchange", router);
