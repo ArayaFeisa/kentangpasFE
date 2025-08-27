@@ -6,10 +6,12 @@ export type Season = "Hujan" | "Kemarau";
 class CalculatorPage {
   private gen: Generation;
   private season: Season;
+  private resetSpacing: boolean;
 
-  constructor(gen: Generation, season: Season) {
+  constructor(gen: Generation, season: Season, resetSpacing: boolean = false) {
     this.gen = gen;
     this.season = season;
+    this.resetSpacing = resetSpacing;
   }
 
   private getDefaultSizes() {
@@ -37,6 +39,9 @@ class CalculatorPage {
       `;
     }
 
+    const guludanValue = this.resetSpacing ? "" : `value="${defaults.guludan}"`;
+    const gerandulValue = this.resetSpacing ? "" : `value="${defaults.gerandul}"`;
+
     return `
       <!-- Panjang Lahan -->
       <div>
@@ -53,13 +58,13 @@ class CalculatorPage {
       <!-- Lebar Guludan -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Lebar Guludan (cm)</label>
-        <input type="number" name="guludan" value="${defaults.guludan}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
+        <input type="number" name="guludan" ${guludanValue} class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
       </div>
 
       <!-- Lebar Gerandul / Parit -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Lebar Gerandul / Parit (cm)</label>
-        <input type="number" name="gerandul" value="${defaults.gerandul}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
+        <input type="number" name="gerandul" ${gerandulValue} class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
       </div>
 
       ${extraFields}

@@ -47,12 +47,12 @@ function renderSeasonPopup(gen: "G0" | "G2" | "G3") {
 
   kemarauBtn.addEventListener("click", () => {
     removeOverlay();
-    renderCalculator(gen, "Kemarau");
+    renderSpacingPopup(gen, "Kemarau");
   });
 
   hujanBtn.addEventListener("click", () => {
     removeOverlay();
-    renderCalculator(gen, "Hujan");
+    renderSpacingPopup(gen, "Hujan");
   });
 
   const onKey = (e: KeyboardEvent) => {
@@ -64,7 +64,53 @@ function renderSeasonPopup(gen: "G0" | "G2" | "G3") {
   document.addEventListener("keydown", onKey);
 }
 
-function renderCalculator(gen: "G0" | "G2" | "G3", season: "Hujan" | "Kemarau") {
+function renderSpacingPopup(
+  gen: "G0" | "G2" | "G3",
+  season: "Hujan" | "Kemarau"
+) {
+  let overlay = document.querySelector("#overlay") as HTMLElement | null;
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "overlay";
+    overlay.className =
+      "fixed inset-0 flex items-center justify-center bg-black/40 z-50";
+    document.body.appendChild(overlay);
+  }
+
+  const spacing = season === "Hujan" ? "40 cm x 40 cm" : "30 cm x 30 cm";
+
+  overlay.innerHTML = `
+    <div class="bg-white rounded-2xl p-6 shadow-lg w-80 text-center relative animate-scaleIn border-2 border-green-500">
+      <p class="text-black font-bold mb-6">
+        <span class="inline-block text-yellow-500 mr-2">⚠️</span>
+        Jarak Tanam menjadi ${spacing}.
+      </p>
+      <div class="flex gap-3 justify-center">
+        <button id="btn-setuju" class="flex-1 bg-green-500 text-white font-bold py-2 rounded-lg hover:bg-green-600 transition">Setuju</button>
+        <button id="btn-batal" class="flex-1 bg-gray-300 text-gray-700 font-bold py-2 rounded-lg hover:bg-gray-400 transition">Batalkan</button>
+      </div>
+    </div>
+  `;
+
+  const btnSetuju = overlay.querySelector("#btn-setuju") as HTMLButtonElement;
+  const btnBatal = overlay.querySelector("#btn-batal") as HTMLButtonElement;
+
+  btnSetuju.addEventListener("click", () => {
+    removeOverlay();
+    renderCalculator(gen, season);
+  });
+
+  btnBatal.addEventListener("click", () => {
+    removeOverlay();
+    renderCalculator(gen, season, true);
+  });
+}
+
+function renderCalculator(
+  gen: "G0" | "G2" | "G3",
+  season: "Hujan" | "Kemarau",
+  resetSpacing: boolean = false
+) {
   const desiredPath = `/calculator/${gen}/${season}`;
   if (getActivePathname() !== desiredPath) {
     location.hash = desiredPath;
@@ -72,11 +118,13 @@ function renderCalculator(gen: "G0" | "G2" | "G3", season: "Hujan" | "Kemarau") 
 
   const storageKey = `formData_${gen}_${season}`;
 
-  const calculatorPage = new CalculatorPage(gen, season);
+  const calculatorPage = new CalculatorPage(gen, season, resetSpacing);
   app.replaceChildren();
   app.innerHTML = calculatorPage.render();
 
-  const formEl = app.querySelector<HTMLFormElement>("#calculator-form") || app.querySelector("form");
+  const formEl =
+    app.querySelector<HTMLFormElement>("#calculator-form") ||
+    app.querySelector("form");
   if (formEl) {
     formEl.addEventListener("submit", (e) => e.preventDefault());
 
@@ -91,12 +139,20 @@ function renderCalculator(gen: "G0" | "G2" | "G3", season: "Hujan" | "Kemarau") 
     }
 
     const elements = Array.from(
-      formEl.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("[name]")
+      formEl.querySelectorAll<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >("[name]")
     );
 
     elements.forEach((el) => {
       const name = el.name;
       if (!name) return;
+
+      if (resetSpacing && (name === "guludan" || name === "gerandul")) {
+        el.value = "";
+        return;
+      }
+
       const v = savedData[name];
       if (v === undefined) return;
 
@@ -112,7 +168,7 @@ function renderCalculator(gen: "G0" | "G2" | "G3", season: "Hujan" | "Kemarau") 
       elements.forEach((el) => {
         if (!el.name) return;
         if ((el as HTMLInputElement).type === "checkbox") {
-          data[el.name] = ((el as HTMLInputElement).checked ? "true" : "false");
+          data[el.name] = (el as HTMLInputElement).checked ? "true" : "false";
         } else {
           data[el.name] = el.value || "";
         }
@@ -130,11 +186,16 @@ function renderCalculator(gen: "G0" | "G2" | "G3", season: "Hujan" | "Kemarau") 
 function bindBackBtn(clearStorageKey?: string) {
   const backBtn = app.querySelector("#btn-back") as HTMLButtonElement | null;
   if (backBtn) {
+    backBtn.classList.add(
+      "transition-transform",
+      "duration-200",
+      "hover:scale-105",
+      "hover:bg-red-100"
+    );
     backBtn.onclick = () => {
       if (clearStorageKey) {
         localStorage.removeItem(clearStorageKey);
       }
-      // navigasi ke home
       location.hash = "/";
     };
   }
