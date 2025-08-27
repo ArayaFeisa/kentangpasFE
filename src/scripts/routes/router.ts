@@ -1,4 +1,4 @@
-import { getActiveRoute } from "./url-parser";
+import { getActivePathname, getActiveRoute } from "./url-parser";
 import Home from "../pages/home/home";
 import CalculatorPage from "../pages/calculator/calculator";
 
@@ -10,7 +10,6 @@ function removeOverlay() {
 }
 
 function renderSeasonPopup(gen: "G0" | "G2" | "G3") {
-
   let overlay = document.querySelector("#overlay") as HTMLElement | null;
   if (!overlay) {
     overlay = document.createElement("div");
@@ -23,11 +22,19 @@ function renderSeasonPopup(gen: "G0" | "G2" | "G3") {
 
   overlay.innerHTML = `
     <div class="bg-white rounded-2xl p-6 shadow-lg w-80 text-center relative animate-scaleIn">
-      <button id="close-popup" class="absolute top-2 right-3 text-gray-500">✕</button>
+      <button id="close-popup" class="absolute top-2 right-3 text-gray-500 hover:text-gray-800">✕</button>
       <h2 class="text-lg font-bold mb-4">Musim Tanam? 🌤️</h2>
       <div class="flex gap-3 justify-center">
-        <button id="btn-kemarau" class="flex-1 bg-yellow-400 text-white font-bold py-2 rounded-lg">Musim Kemarau</button>
-        <button id="btn-hujan" class="flex-1 bg-blue-400 text-white font-bold py-2 rounded-lg">Musim Hujan</button>
+        <button 
+          id="btn-kemarau" 
+          class="flex-1 bg-yellow-400 text-white font-bold py-2 rounded-lg transition transform duration-200 hover:scale-105 hover:brightness-110">
+          Musim Kemarau
+        </button>
+        <button 
+          id="btn-hujan" 
+          class="flex-1 bg-blue-400 text-white font-bold py-2 rounded-lg transition transform duration-200 hover:scale-105 hover:brightness-110">
+          Musim Hujan
+        </button>
       </div>
     </div>
   `;
@@ -40,12 +47,12 @@ function renderSeasonPopup(gen: "G0" | "G2" | "G3") {
 
   kemarauBtn.addEventListener("click", () => {
     removeOverlay();
-    renderCalculator(gen, "KEMARAU");
+    renderCalculator(gen, "Kemarau");
   });
 
   hujanBtn.addEventListener("click", () => {
     removeOverlay();
-    renderCalculator(gen, "HUJAN");
+    renderCalculator(gen, "Hujan");
   });
 
   const onKey = (e: KeyboardEvent) => {
@@ -57,30 +64,62 @@ function renderSeasonPopup(gen: "G0" | "G2" | "G3") {
   document.addEventListener("keydown", onKey);
 }
 
-function renderCalculator(
-  gen: "G0" | "G2" | "G3",
-  season: "HUJAN" | "KEMARAU"
-) {
+function renderCalculator(gen: "G0" | "G2" | "G3", season: "Hujan" | "Kemarau") {
+  // simpan ke hash url
+  location.hash = `/calculator/${gen}/${season}`;
+
   const calculatorPage = new CalculatorPage(gen, season);
+  app.replaceChildren();
   app.innerHTML = calculatorPage.render();
+
+  const formEl = app.querySelector("form");
+  if (formEl) {
+    formEl.addEventListener("submit", (e) => e.preventDefault());
+
+    const savedData = JSON.parse(localStorage.getItem("formData") || "{}");
+    formEl.querySelectorAll("input, select").forEach((el: any) => {
+      if (savedData[el.name]) el.value = savedData[el.name];
+    });
+
+    formEl.addEventListener("input", () => {
+      const data: Record<string, string> = {};
+      formEl.querySelectorAll("input, select").forEach((el: any) => {
+        if (el.name) data[el.name] = el.value;
+      });
+      localStorage.setItem("formData", JSON.stringify(data));
+    });
+  }
+
   bindBackBtn();
 }
 
+
 function bindBackBtn() {
   const backBtn = app.querySelector("#btn-back") as HTMLButtonElement | null;
-  backBtn?.addEventListener("click", () => {
-    location.hash = "/";
-  });
+  if (backBtn) {
+    backBtn.onclick = () => {
+      location.hash = "/";
+    };
+  }
 }
 
 export function router() {
   removeOverlay();
 
-  const activeRoute = getActiveRoute();
+  const path = getActivePathname();
+  const segments = path.split("/").filter(Boolean);
 
-  switch (activeRoute) {
+  if (segments[0] === "calculator" && segments[1] && segments[2]) {
+    const gen = segments[1] as "G0" | "G2" | "G3";
+    const season = segments[2] as "Hujan" | "Kemarau";
+    renderCalculator(gen, season);
+    return;
+  }
+
+  switch (getActiveRoute()) {
     case "/":
       const homePage = new Home();
+      app.replaceChildren();
       app.innerHTML = homePage.render();
 
       const g0Btn = app.querySelector("#btn-g0") as HTMLButtonElement | null;

@@ -1,7 +1,7 @@
 import "../../../styles/tailwind.css";
 
 export type Generation = "G0" | "G2" | "G3";
-export type Season = "HUJAN" | "KEMARAU";
+export type Season = "Hujan" | "Kemarau";
 
 class CalculatorPage {
   private gen: Generation;
@@ -13,7 +13,7 @@ class CalculatorPage {
   }
 
   private getDefaultSizes() {
-    if (this.season === "HUJAN") {
+    if (this.season === "Hujan") {
       return { guludan: 80, gerandul: 40 };
     } else {
       return { guludan: 60, gerandul: 30 };
@@ -41,25 +41,25 @@ class CalculatorPage {
       <!-- Panjang Lahan -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Panjang Lahan (m)</label>
-        <input type="number" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
+        <input type="number" name="panjang" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
       </div>
 
       <!-- Lebar Lahan -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Lebar Lahan (m)</label>
-        <input type="number" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
+        <input type="number" name="lebar" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
       </div>
 
       <!-- Lebar Guludan -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Lebar Guludan (cm)</label>
-        <input type="number" value="${defaults.guludan}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
+        <input type="number" name="guludan" value="${defaults.guludan}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
       </div>
 
       <!-- Lebar Gerandul / Parit -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Lebar Gerandul / Parit (cm)</label>
-        <input type="number" value="${defaults.gerandul}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
+        <input type="number" name="gerandul" value="${defaults.gerandul}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
       </div>
 
       ${extraFields}
@@ -72,7 +72,11 @@ class CalculatorPage {
         
         <!-- Header -->
         <header class="mb-6">
-          <button id="btn-back" class="text-gray-600 text-sm mb-4">← Kembali</button>
+          <button 
+            id="btn-back" 
+            class="text-gray-600 text-sm mb-4 px-3 py-1 rounded-lg transition transform duration-200 hover:scale-105 hover:bg-gray-200">
+            ← Kembali
+          </button>
           <h1 class="text-lg font-bold">Kalkulator Tani Presisi Bromo (${this.gen})</h1>
           <h2 class="text-sm text-gray-600">Ukuran Lahan (Metode Guludan) - Musim ${this.season}</h2>
         </header>
