@@ -1,15 +1,27 @@
 import "../../../styles/tailwind.css";
 
-type Generation = "G0" | "G2" | "G3";
+export type Generation = "G0" | "G2" | "G3";
+export type Season = "HUJAN" | "KEMARAU";
 
 class CalculatorPage {
   private gen: Generation;
+  private season: Season;
 
-  constructor(gen: Generation) {
+  constructor(gen: Generation, season: Season) {
     this.gen = gen;
+    this.season = season;
+  }
+
+  private getDefaultSizes() {
+    if (this.season === "HUJAN") {
+      return { guludan: 80, gerandul: 40 };
+    } else {
+      return { guludan: 60, gerandul: 30 };
+    }
   }
 
   private renderFields(): string {
+    const defaults = this.getDefaultSizes();
     let extraFields = "";
 
     if (this.gen === "G0" || this.gen === "G2") {
@@ -41,13 +53,13 @@ class CalculatorPage {
       <!-- Lebar Guludan -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Lebar Guludan (cm)</label>
-        <input type="number" value="80" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
+        <input type="number" value="${defaults.guludan}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
       </div>
 
       <!-- Lebar Gerandul / Parit -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Lebar Gerandul / Parit (cm)</label>
-        <input type="number" value="40" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
+        <input type="number" value="${defaults.gerandul}" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500"/>
       </div>
 
       ${extraFields}
@@ -60,10 +72,10 @@ class CalculatorPage {
         
         <!-- Header -->
         <header class="mb-6">
-  <button id="btn-back" class="text-gray-600 text-sm mb-4">← Kembali</button>
-  <h1 class="text-lg font-bold">Kalkulator Tani Presisi Bromo (${this.gen})</h1>
-  <h2 class="text-sm text-gray-600">Ukuran Lahan (Metode Guludan)</h2>
-</header>
+          <button id="btn-back" class="text-gray-600 text-sm mb-4">← Kembali</button>
+          <h1 class="text-lg font-bold">Kalkulator Tani Presisi Bromo (${this.gen})</h1>
+          <h2 class="text-sm text-gray-600">Ukuran Lahan (Metode Guludan) - Musim ${this.season}</h2>
+        </header>
 
         <!-- Form -->
         <form class="flex flex-col gap-4">
@@ -85,7 +97,7 @@ class CalculatorPage {
           </button>
         </form>
 
-        <!-- Dekorasi (opsional, bisa SVG daun dsb) -->
+        <!-- Dekorasi -->
         <div class="mt-8 flex justify-center">
           <img src="/assets/leaf.svg" alt="decor" class="w-16 h-16 opacity-80"/>
         </div>
