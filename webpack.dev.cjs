@@ -7,7 +7,7 @@ module.exports = merge(common, {
   devServer: {
     static: './dist',
     hot: true,
-    port: 3000, // bisa ganti sesuai kebutuhan
-    open: true, // otomatis buka browser
+    port: 3000,
+    open: true,
   },
 });
