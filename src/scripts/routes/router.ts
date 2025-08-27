@@ -65,39 +65,76 @@ function renderSeasonPopup(gen: "G0" | "G2" | "G3") {
 }
 
 function renderCalculator(gen: "G0" | "G2" | "G3", season: "Hujan" | "Kemarau") {
-  // simpan ke hash url
-  location.hash = `/calculator/${gen}/${season}`;
+  const desiredPath = `/calculator/${gen}/${season}`;
+  if (getActivePathname() !== desiredPath) {
+    location.hash = desiredPath;
+  }
+
+  const storageKey = `formData_${gen}_${season}`;
 
   const calculatorPage = new CalculatorPage(gen, season);
   app.replaceChildren();
   app.innerHTML = calculatorPage.render();
 
-  const formEl = app.querySelector("form");
+  const formEl = app.querySelector<HTMLFormElement>("#calculator-form") || app.querySelector("form");
   if (formEl) {
     formEl.addEventListener("submit", (e) => e.preventDefault());
 
-    const savedData = JSON.parse(localStorage.getItem("formData") || "{}");
-    formEl.querySelectorAll("input, select").forEach((el: any) => {
-      if (savedData[el.name]) el.value = savedData[el.name];
+    const raw = localStorage.getItem(storageKey);
+    let savedData: Record<string, string> = {};
+    if (raw) {
+      try {
+        savedData = JSON.parse(raw) as Record<string, string>;
+      } catch {
+        savedData = {};
+      }
+    }
+
+    const elements = Array.from(
+      formEl.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("[name]")
+    );
+
+    elements.forEach((el) => {
+      const name = el.name;
+      if (!name) return;
+      const v = savedData[name];
+      if (v === undefined) return;
+
+      if ((el as HTMLInputElement).type === "checkbox") {
+        (el as HTMLInputElement).checked = v === "true";
+      } else {
+        el.value = v;
+      }
     });
 
-    formEl.addEventListener("input", () => {
+    const saveFormData = () => {
       const data: Record<string, string> = {};
-      formEl.querySelectorAll("input, select").forEach((el: any) => {
-        if (el.name) data[el.name] = el.value;
+      elements.forEach((el) => {
+        if (!el.name) return;
+        if ((el as HTMLInputElement).type === "checkbox") {
+          data[el.name] = ((el as HTMLInputElement).checked ? "true" : "false");
+        } else {
+          data[el.name] = el.value || "";
+        }
       });
-      localStorage.setItem("formData", JSON.stringify(data));
-    });
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    };
+
+    formEl.addEventListener("input", saveFormData);
+    formEl.addEventListener("change", saveFormData);
   }
 
-  bindBackBtn();
+  bindBackBtn(storageKey);
 }
 
-
-function bindBackBtn() {
+function bindBackBtn(clearStorageKey?: string) {
   const backBtn = app.querySelector("#btn-back") as HTMLButtonElement | null;
   if (backBtn) {
     backBtn.onclick = () => {
+      if (clearStorageKey) {
+        localStorage.removeItem(clearStorageKey);
+      }
+      // navigasi ke home
       location.hash = "/";
     };
   }

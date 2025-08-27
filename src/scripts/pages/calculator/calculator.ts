@@ -29,9 +29,9 @@ class CalculatorPage {
         <!-- Mulsa -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Mulsa</label>
-          <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
-            <option>YA</option>
-            <option>TIDAK</option>
+          <select name="mulsa" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-green-500">
+            <option value="YA">YA</option>
+            <option value="TIDAK">TIDAK</option>
           </select>
         </div>
       `;
@@ -74,7 +74,8 @@ class CalculatorPage {
         <header class="mb-6">
           <button 
             id="btn-back" 
-            class="text-gray-600 text-sm mb-4 px-3 py-1 rounded-lg transition transform duration-200 hover:scale-105 hover:bg-gray-200">
+            type="button"
+            class="text-gray-600 text-sm mb-4 px-3 py-1 rounded-lg transition transform duration-200 hover:scale-105 hover:bg-gray-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-300">
             ← Kembali
           </button>
           <h1 class="text-lg font-bold">Kalkulator Tani Presisi Bromo (${this.gen})</h1>
@@ -82,12 +83,12 @@ class CalculatorPage {
         </header>
 
         <!-- Form -->
-        <form class="flex flex-col gap-4">
+        <form id="calculator-form" class="flex flex-col gap-4">
           ${this.renderFields()}
 
           <!-- Hitung Estimasi Biaya -->
           <div class="flex items-start gap-2">
-            <input type="checkbox" checked class="mt-1"/>
+            <input type="checkbox" name="estimasiBiaya" checked class="mt-1"/>
             <div class="text-sm text-gray-700">
               Hitung Estimasi Biaya <br/>
               <span class="text-gray-500 text-xs">Harga default untuk ${this.gen} sebesar Rp XX.XXX/kg</span>
