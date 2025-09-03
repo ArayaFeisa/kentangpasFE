@@ -1,7 +1,120 @@
+/* ===== Tailwind v4 ===== */
 @import "tailwindcss";
 
-html, body, #app { height: 100%; }
+/* ===== Design tokens (ganti tailwind.config.js di v4) ===== */
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
 
-body {
-  @apply bg-gray-50 text-gray-900;
+  /* warna yang sebelumnya ada di tailwind.config.js */
+  --color-primary: #49a939;
+  /* Button bottom, leaf, "PAS!" */
+  --color-primary-dark: #2c6922;
+  /* Leaf */
+  --color-primary-light: #a7e19d;
+  /* Button non-selected, line */
+  --color-primary-pale: #eaffe7;
+  /* Background History */
+
+  --color-neutral: #000000;
+  /* text color */
+  --color-neutral-surface: #f6fbf3;
+  /* Background button & kolom field */
+  --color-neutral-background: #ffffff;
+  /* Main background */
+  --color-neutral-stroke: #d7d7d7;
+  /* Stroke */
+
+  --radius-2xl: 1.25rem;
+
+  --color-g0: #177308;
+  --color-g2: #3b2819;
+  --color-g3: #a46e2d;
+}
+
+/* ===== Utilities kustom ===== */
+@layer utilities {
+  .animate-scale-in {
+    animation: kp-scale-in 0.2s ease-out;
+  }
+
+  @keyframes kp-scale-in {
+    from {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+/* ===== Komponen reusable ===== */
+@layer components {
+
+  /* Bottom nav */
+  .kp-nav {
+    @apply fixed bottom-0 inset-x-0 bg-neutral-background border-t border-neutral-stroke;
+  }
+
+  .kp-nav ul {
+    @apply mx-auto max-w-md grid grid-cols-3 gap-2 p-3;
+  }
+
+  .kp-nav a {
+    @apply flex flex-col items-center gap-1 text-xs text-gray-600 py-1 rounded-lg;
+  }
+
+  .kp-nav a[aria-current="page"] {
+    @apply text-primary font-medium;
+  }
+
+  /* Kartu kategori */
+  .kp-card {
+    @apply relative overflow-hidden rounded-[28px] p-6 text-white;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, .18);
+  }
+
+  .kp-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(120px 80px at 20% 25%, rgba(255, 255, 255, .08), transparent 60%),
+      radial-gradient(110px 70px at 80% 30%, rgba(0, 0, 0, .10), transparent 65%),
+      radial-gradient(140px 90px at 40% 80%, rgba(255, 255, 255, .07), transparent 60%);
+    pointer-events: none;
+  }
+
+  .kp-blob {
+    @apply absolute pointer-events-none select-none opacity-60;
+    z-index: 5;
+  }
+
+  .kp-card-g3 .kp-blob {
+    opacity: 0.85;
+    mix-blend-mode: screen;
+  }
+
+  .kp-blob-top {
+    top: 0;
+    left: 0;
+    width: 140%;
+    transform: translate(-6%, -12%);
+  }
+
+  .kp-blob-btm {
+    bottom: 0;
+    right: 0;
+    width: 150%;
+    transform: translate(14%, 12%);
+  }
+
+  .kp-card-content {
+    @apply relative z-10 flex flex-col items-center gap-4;
+  }
 }
