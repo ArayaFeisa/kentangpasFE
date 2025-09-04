@@ -1,14 +1,21 @@
-// src/scripts/routes/router.ts
 import { getActivePathname, getActiveRoute } from "./url-parser";
 import Home from "../pages/home/home";
-import CalculatorPage from "../pages/calculator/calculator";
+// import CalculatorG0 from "../pages/calculator/calculatorg0";
+// import CalculatorG2 from "../pages/calculator/calculatorg2";
+import CalculatorG3 from "../pages/calculator/calculatorg3";
 
-/** Tipe yang dipakai berulang */
 type Gen = "G0" | "G2" | "G3";
 type Season = "Hujan" | "Kemarau";
 
-/** Elemen root aplikasi */
-const app = document.querySelector<HTMLElement>("#app");
+const app = document.querySelector("#app") as HTMLElement;
+
+function resolveCalculatorPage(gen: Gen, season: Season, reset = false) {
+  switch (gen) {
+//    case "G0": return new CalculatorG0(season, reset);
+//    case "G2": return new CalculatorG2(season, reset);
+    case "G3": return new CalculatorG3(season, reset);
+  }
+}
 
 /** ------- Overlay helpers ------- **/
 
@@ -121,14 +128,13 @@ function renderSpacingPopup(gen: Gen, season: Season) {
 function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
   const desiredPath = `/calculator/${gen}/${season}`;
   if (getActivePathname() !== desiredPath) {
-    location.hash = desiredPath; // akan memicu router lagi; return biar tidak double render
+    location.hash = desiredPath;
     return;
   }
 
   const storageKey = `formData_${gen}_${season}`;
-  const calculatorPage = new CalculatorPage(gen, season, resetSpacing);
+  const calculatorPage = resolveCalculatorPage(gen, season, resetSpacing)!;
 
-  if (!app) return;
   app.replaceChildren();
   app.innerHTML = calculatorPage.render();
 
@@ -208,7 +214,10 @@ function handleRoute() {
 
   // /calculator/:gen/:season
   if (segments[0] === "calculator" && segments[1] && segments[2]) {
-    return renderCalculator(segments[1] as Gen, segments[2] as Season);
+  const gen = segments[1] as Gen;
+  const season = segments[2] as Season;
+  renderCalculator(gen, season);
+  return;
   }
 
   // Home
