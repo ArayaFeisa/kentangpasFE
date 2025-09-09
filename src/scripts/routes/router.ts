@@ -1,7 +1,7 @@
 import { getActivePathname, getActiveRoute } from "./url-parser";
 import Home from "../pages/home/home";
-// import CalculatorG0 from "../pages/calculator/calculatorg0";
-// import CalculatorG2 from "../pages/calculator/calculatorg2";
+import CalculatorG0 from "../pages/calculator/calculatorg0";
+import CalculatorG2 from "../pages/calculator/calculatorg2";
 import CalculatorG3 from "../pages/calculator/calculatorg3";
 
 type Gen = "G0" | "G2" | "G3";
@@ -11,8 +11,8 @@ const app = document.querySelector("#app") as HTMLElement;
 
 function resolveCalculatorPage(gen: Gen, season: Season, reset = false) {
   switch (gen) {
-//    case "G0": return new CalculatorG0(season, reset);
-//    case "G2": return new CalculatorG2(season, reset);
+    case "G0": return new CalculatorG0(season, reset);
+    case "G2": return new CalculatorG2(season, reset);
     case "G3": return new CalculatorG3(season, reset);
   }
 }
