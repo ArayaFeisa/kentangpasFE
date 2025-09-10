@@ -115,3 +115,60 @@ class CalculatorG2 {
 }
 
 export default CalculatorG2;
+
+interface G2RequestPayload {
+  generasiBibit: "G2";
+  panjangLahan: number;
+  lebarLahan: number;
+  lebarGuludan: number;
+  lebarParit: number;
+  jarakTanam: number;
+  estimasiHarga: number;
+}
+
+interface G2ResponsePayload {
+  message: string;
+  data: {
+    ringkasanLahan: {
+      lebarUnitTanam: string;
+      jumlahGuludan: string;
+      panjangTanamPerGuludan: string;
+    };
+    kebutuhanTanam: {
+      jumlahTanamanPerGuludan: string;
+      totalPopulasiTanaman: string;
+    };
+    kebutuhanBibit: {
+      estimasi: string;
+      unit: "kg";
+      note: string;
+    };
+    estimasiBiaya: {
+      total: string;
+    };
+  };
+}
+
+const API_URL = "https://apikentangpas.cloud/api/calculate";
+
+function showG2ResultOverlay(res: G2ResponsePayload) {
+  const d = res.data;
+  const overlay = document.createElement("div");
+  overlay.className = "fixed inset-0 flex items-center justify-center bg-black/50 z-50";
+  overlay.innerHTML = `
+    <div class="bg-white rounded-2xl shadow-lg w-[90%] max-w-md p-6 space-y-4">
+      <h2 class="text-xl font-bold">Hasil Perhitungan</h2>
+      <p><b>Lebar 1 Unit:</b> ${d.ringkasanLahan.lebarUnitTanam}</p>
+      <p><b>Jumlah Guludan:</b> ${d.ringkasanLahan.jumlahGuludan}</p>
+      <p><b>Panjang Tanam/Guludan:</b> ${d.ringkasanLahan.panjangTanamPerGuludan}</p>
+      <p><b>Jumlah Tanaman/Guludan:</b> ${d.kebutuhanTanam.jumlahTanamanPerGuludan}</p>
+      <p><b>Total Populasi:</b> ${d.kebutuhanTanam.totalPopulasiTanaman}</p>
+      <p><b>Kebutuhan Bibit:</b> ${d.kebutuhanBibit.estimasi}</p>
+      <p class="text-xs text-gray-500">${d.kebutuhanBibit.note}</p>
+      <p><b>Total Biaya:</b> ${d.estimasiBiaya.total}</p>
+      <button id="btn-ok" class="w-full mt-4 bg-green-600 text-white py-2 rounded-xl">Ok</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector("#btn-ok")?.addEventListener("click", () => overlay.remove());
+}
