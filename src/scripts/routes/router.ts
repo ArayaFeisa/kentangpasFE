@@ -3,6 +3,7 @@ import Home from "../pages/home/home";
 import CalculatorG0 from "../pages/calculator/calculatorg0";
 import CalculatorG2 from "../pages/calculator/calculatorg2";
 import CalculatorG3 from "../pages/calculator/calculatorg3";
+import ResultPage from "../pages/result/result";
 
 type Gen = "G0" | "G2" | "G3";
 type Season = "Hujan" | "Kemarau";
@@ -276,9 +277,11 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
               estimasiBiaya: { total: string };
             };
           };
-
-          // tampilkan overlay hasil (pakai ensureOverlay yang sama)
-          showG2ResultOverlay(data);
+          sessionStorage.setItem(
+            "last_result",
+            JSON.stringify({ gen, season, result: data })
+          );
+          location.hash = `/result/${gen}/${season}`;
         } catch (err: any) {
           const o = ensureOverlay();
           o.innerHTML = `
@@ -295,8 +298,7 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
           enableEscToClose();
         }
       } else {
-        // Gen lain: untuk sekarang cukup cegah submit (tetap simpan localStorage)
-        // Nanti bisa ditambahkan handler sesuai payload backend G0/G3
+        // Other Gen
       }
     });
   }
@@ -322,6 +324,17 @@ function handleRoute() {
 
   const path = getActivePathname();
   const segments = path.split("/").filter(Boolean);
+
+  if (segments[0] === "result" && segments[1] && segments[2]) {
+    const gen = segments[1] as Gen;
+    const season = segments[2] as Season;
+    const page = new ResultPage(gen, season);
+    if (!app) return;
+    app.replaceChildren();
+    app.innerHTML = page.render();
+    page.mount(app);
+    return;
+  }
 
   if (segments[0] === "calculator" && segments[1] && segments[2]) {
   const gen = segments[1] as Gen;
