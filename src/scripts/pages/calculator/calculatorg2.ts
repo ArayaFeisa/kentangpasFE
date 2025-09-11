@@ -1,3 +1,5 @@
+import { API_URL } from "../../../config/api";
+
 type Season = "Hujan" | "Kemarau";
 
 class CalculatorG2 {
@@ -148,5 +150,3 @@ interface G2ResponsePayload {
     };
   };
 }
-
-const API_URL = "https://apikentangpas.cloud/api/calculate";

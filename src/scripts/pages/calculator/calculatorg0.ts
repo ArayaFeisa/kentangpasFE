@@ -1,3 +1,5 @@
+import { API_URL } from "../../../config/api";
+
 type Season = "Hujan" | "Kemarau";
 
 class CalculatorG0 {
@@ -108,3 +110,36 @@ class CalculatorG0 {
 }
 
 export default CalculatorG0;
+
+export interface G0RequestPayload {
+  generasiBibit: "G0";
+  panjangLahan: number;
+  lebarLahan: number;
+  lebarGuludan: number;
+  lebarParit: number;
+  jarakTanam: number;
+  estimasiHarga: number;
+}
+
+export interface G0ResponsePayload {
+  message: string;
+  data: {
+    ringkasanLahan: {
+      lebarUnitTanam: string;
+      jumlahGuludan: string;
+      panjangTanamPerGuludan: string;
+    };
+    kebutuhanTanam: {
+      jumlahTanamanPerGuludan: string;
+      totalPopulasiTanaman: string;
+    };
+    kebutuhanBibit: {
+      estimasi: string;
+      unit: "biji";
+      note: string;
+    };
+    estimasiBiaya: {
+      total: string;
+    };
+  };
+}

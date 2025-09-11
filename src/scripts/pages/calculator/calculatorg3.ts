@@ -1,3 +1,5 @@
+import { API_URL } from "../../../config/api";
+
 type Season = "Hujan" | "Kemarau";
 
 class CalculatorG3 {
@@ -16,13 +18,14 @@ class CalculatorG3 {
     <!-- App Bar -->
     <header class="sticky top-0 z-30 bg-[#F6F8FC] border-b border-gray-200">
       <div class="flex items-center gap-3 px-4 py-3">
-        <button id="btn-back" type="button"
-          class="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-gray-200/60"
-          aria-label="Kembali">
-          <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/>
-          </svg>
-        </button>
+                <button id="btn-back" type="button"
+  class="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-gray-200/60"
+  aria-label="Kembali">
+  <svg viewBox="0 0 24 24" class="h-5 w-5 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/>
+  </svg>
+</button>
+
         <h1 class="text-sm sm:text-base font-semibold text-gray-900">
           Kalkulator Tani Presisi Bromo (G3)
         </h1>
@@ -115,3 +118,36 @@ class CalculatorG3 {
 }
 
 export default CalculatorG3;
+
+export interface G3RequestPayload {
+  generasiBibit: "G3";
+  panjangLahan: number;
+  lebarLahan: number;
+  lebarGuludan: number;
+  lebarParit: number;
+  jarakTanam: number;
+  estimasiHarga: number;
+}
+
+export interface G3ResponsePayload {
+  message: string;
+  data: {
+    ringkasanLahan: {
+      lebarUnitTanam: string;
+      jumlahGuludan: string;
+      panjangTanamPerGuludan: string;
+    };
+    kebutuhanTanam: {
+      jumlahTanamanPerGuludan: string;
+      totalPopulasiTanaman: string;
+    };
+    kebutuhanBibit: {
+      estimasi: string;
+      unit: "kg";
+      note: string;
+    };
+    estimasiBiaya: {
+      total: string;
+    };
+  };
+}
