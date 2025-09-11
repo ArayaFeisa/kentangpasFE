@@ -135,7 +135,6 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
     app.querySelector<HTMLFormElement>("form");
 
   if (formEl) {
-    // --- restore dari localStorage (tetap) ---
     const saved = localStorage.getItem(storageKey);
     const savedData: Record<string, string> = saved
       ? (() => {
@@ -185,12 +184,8 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
 
     formEl.addEventListener("input", save);
     formEl.addEventListener("change", save);
-
-    // --- SUBMIT HANDLER (baru) ---
     formEl.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      // helper ambil number
       const num = (sel: string) =>
         Number(
           (formEl.querySelector<HTMLInputElement>(sel)?.value || "0")
@@ -199,7 +194,6 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
         );
 
       if (gen === "G2") {
-        // payload sesuai backend (G2)
         const payload = {
           generasiBibit: "G2" as const,
           panjangLahan: num("#panjang"),
@@ -209,10 +203,7 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
           jarakTanam: num("#jarak_tanam"),
           estimasiHarga: num("#harga_perkg"),
         };
-
-        // validasi ringan
         if (!payload.panjangLahan || !payload.lebarLahan) {
-          // pakai overlay umum kamu:
           const overlay = ensureOverlay();
           overlay.innerHTML = `
             <div role="dialog" aria-modal="true"
@@ -228,8 +219,6 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
           enableEscToClose();
           return;
         }
-
-        // loading overlay
         const overlay = ensureOverlay();
         overlay.innerHTML = `
           <div role="dialog" aria-modal="true" aria-busy="true"
