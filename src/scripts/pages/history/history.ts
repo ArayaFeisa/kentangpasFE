@@ -1,0 +1,138 @@
+export type Gen = "G0" | "G2" | "G3";
+export type Season = "Hujan" | "Kemarau";
+
+export type HistoryItem = {
+  id: string;
+  gen: Gen;
+  season: Season;
+  amount: number;
+  dateISO: string;
+  resultPayload: unknown;
+};
+
+const HISTORY_KEY = "calc_history_v1";
+
+export function getHistory(): HistoryItem[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? (arr as HistoryItem[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function addHistory(item: HistoryItem) {
+  const list = getHistory();
+  list.unshift(item);
+
+  const seen = new Set<string>();
+  const dedup = list
+    .filter((x) => (seen.has(x.id) ? false : (seen.add(x.id), true)))
+    .slice(0, 100);
+
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(dedup));
+}
+
+export function clearHistory() {
+  localStorage.removeItem(HISTORY_KEY);
+}
+
+export const toIDR = (n: number) =>
+  new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 })
+    .format(n)
+    .replace(/,00$/g, "");
+
+export const toIndoDate = (iso: string) => {
+  const d = new Date(iso);
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}-${mm}-${yyyy}`;
+};
+
+export default class HistoryPage {
+  render(): string {
+    const items = getHistory();
+
+    return `
+    <div class="relative mx-auto max-w-md min-h-screen bg-[#F6F8FC]">
+      <!-- Header -->
+      <header class="sticky top-0 z-30 bg-white/90 border-b border-gray-200 backdrop-blur">
+        <div class="flex items-center gap-3 px-4 py-3">
+          <div class="grid h-8 w-8 place-items-center rounded-xl bg-emerald-50">
+            <svg class="h-4 w-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10Z"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-lg font-semibold text-gray-900">History</h1>
+            <p class="text-[11px] text-gray-500">Hasil Perhitungan</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="px-4 py-4 pb-28">
+        <div class="space-y-3" id="history-list">
+          ${items.length
+        ? items
+          .map(
+            (it) => `
+            <button data-id="${it.id}" class="relative w-full text-left rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 shadow-sm transition hover:shadow-md">
+              <div class="text-sm text-gray-700">${it.gen}</div>
+              <div class="mt-1 text-[13px] text-gray-600">
+                Estimasi Biaya <span class="font-semibold text-emerald-700">${toIDR(it.amount)}</span>
+              </div>
+              <div class="absolute bottom-3 right-4 text-[10px] text-emerald-700/70">${toIndoDate(it.dateISO)}</div>
+              <span class="absolute right-3 top-3 grid h-8 w-8 place-items-center rounded-full bg-white/70 backdrop-blur">
+                <svg class="h-4 w-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </span>
+            </button>`
+          )
+          .join("")
+        : `<div class="text-center text-sm text-gray-500 py-10">Belum ada riwayat perhitungan.</div>`
+      }
+        </div>
+      </main>
+
+      <!-- Bottom Tabs -->
+      <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200" aria-label="Navigasi bawah">
+          <div class="flex justify-center gap-16 py-3">
+              <!-- Beranda -->
+              <a href="#/" data-nav class="flex flex-col items-center aria-[current=page]:text-emerald-700">
+                <img src="./icons/beranda1.svg" alt="Beranda" class="w-6 h-6" />
+              <span class="text-xs mt-1">Beranda</span>
+              </a>
+              <!-- History (selected on this page) -->
+              <a href="#/history" data-nav aria-current="page" class="flex flex-col items-center aria-[current=page]:text-emerald-700">
+                <img src="./icons/history1.svg" alt="History" class="w-6 h-6" />
+              <span class="text-xs mt-1">History</span>
+            </a>
+          </div>
+      </nav>
+    </div>`;
+  }
+  mount(root: HTMLElement) {
+    root.querySelectorAll<HTMLButtonElement>("[data-id]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.getAttribute("data-id")!;
+        const item = getHistory().find((x) => x.id === id);
+        if (!item) return;
+        sessionStorage.setItem(
+          "last_result",
+          JSON.stringify({ gen: item.gen, season: item.season, result: item.resultPayload })
+        );
+
+        location.hash = `/result/${item.gen}/${item.season}`;
+      });
+    });
+    root.querySelector("#tab-home")?.addEventListener("click", () => {
+      location.hash = "/";
+    });
+  }
+}

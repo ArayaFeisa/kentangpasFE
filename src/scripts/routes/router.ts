@@ -4,6 +4,7 @@ import CalculatorG0 from "../pages/calculator/calculatorg0";
 import CalculatorG2 from "../pages/calculator/calculatorg2";
 import CalculatorG3 from "../pages/calculator/calculatorg3";
 import ResultPage from "../pages/result/result";
+import HistoryPage from "../pages/history/history";
 
 type Gen = "G0" | "G2" | "G3";
 type Season = "Hujan" | "Kemarau";
@@ -117,11 +118,13 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
   };
   formEl.addEventListener("input", save);
   formEl.addEventListener("change", save);
-  formEl.addEventListener("submit", async (e) => {
+      formEl.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const readNum = (sel: string) =>
-      Number((formEl.querySelector<HTMLInputElement>(sel)?.value || "0").toString().replace(",", "."));
+      Number((formEl.querySelector<HTMLInputElement>(sel)?.value || "0")
+        .toString()
+        .replace(",", "."));
 
     const base = {
       panjangLahan: readNum("#panjang"),
@@ -134,10 +137,9 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
     const payload =
       gen === "G0" ? { generasiBibit: "G0" as const, ...base, estimasiHarga: readNum("#harga_bibit") }
     : gen === "G2" ? { generasiBibit: "G2" as const, ...base, estimasiHarga: readNum("#harga_perkg") }
-    : gen === "G3" ? { generasiBibit: "G3" as const, ...base, estimasiHarga: readNum("#harga_perkg") }
-    : null;
+    : { generasiBibit: "G3" as const, ...base, estimasiHarga: readNum("#harga_perkg") };
 
-    if (!payload || !payload.panjangLahan || !payload.lebarLahan) {
+    if (!payload.panjangLahan || !payload.lebarLahan) {
       const o = ensureOverlay();
       o.innerHTML = `
         <div class="bg-white rounded-2xl p-6 shadow-lg w-[90%] max-w-md animate-scale-in">
@@ -146,8 +148,7 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
           <div class="mt-6 text-right">
             <button id="btn-close-error" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">Tutup</button>
           </div>
-        </div>
-      `;
+        </div>`;
       o.querySelector("#btn-close-error")?.addEventListener("click", removeOverlay);
       enableEscToClose();
       return;
@@ -158,8 +159,7 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
       <div class="bg-white rounded-2xl p-6 shadow-lg w-[90%] max-w-md text-center animate-scale-in">
         <div class="mx-auto h-10 w-10 rounded-full border-4 border-primary/30 border-t-primary animate-spin"></div>
         <p class="mt-4 text-sm text-gray-600">Menghitung...</p>
-      </div>
-    `;
+      </div>`;
     enableEscToClose();
 
     try {
@@ -173,8 +173,23 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
         try { const err = await res.json(); if (err?.message) msg = err.message; } catch {}
         throw new Error(msg);
       }
+
       const data = await res.json();
       sessionStorage.setItem("last_result", JSON.stringify({ gen, season, result: data }));
+
+      // simpan ke History
+      const parseIDR = (s: any) => Number(String(s ?? "0").replace(/[^0-9]/g, "")) || 0;
+      const amount = parseIDR(data?.data?.estimasiBiaya?.total);
+      const { addHistory } = await import("../pages/history/history");
+      addHistory({
+        id: (crypto.randomUUID?.() || Date.now().toString()) + Math.random().toString(36).slice(2, 6),
+        gen,
+        season,
+        amount,
+        dateISO: new Date().toISOString().slice(0, 10),
+        resultPayload: data,
+      });
+
       location.hash = `/result/${gen}/${season}`;
     } catch (err: any) {
       const oo = ensureOverlay();
@@ -185,12 +200,12 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
           <div class="mt-6 text-right">
             <button id="btn-close-error" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">Tutup</button>
           </div>
-        </div>
-      `;
+        </div>`;
       oo.querySelector("#btn-close-error")?.addEventListener("click", removeOverlay);
       enableEscToClose();
     }
   });
+
   bindBackBtn(storageKey);
 }
 
@@ -223,6 +238,13 @@ function handleRoute() {
   if (seg[0] === "calculator" && seg[1] && seg[2]) {
     renderCalculator(seg[1] as Gen, seg[2] as Season); return;
   }
+  if (seg[0] === "history") {
+  const page = new HistoryPage();
+  app.replaceChildren();
+  app.innerHTML = page.render();
+  page.mount(app);
+  return;
+}
 
   if (getActiveRoute() === "/") {
     const homePage = new Home();
@@ -242,4 +264,5 @@ export function startRouter() {
   window.addEventListener("hashchange", handleRoute);
   window.addEventListener("load", handleRoute);
 }
+
 export const router = handleRoute;
