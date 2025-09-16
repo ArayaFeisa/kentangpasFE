@@ -177,7 +177,6 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
       const data = await res.json();
       sessionStorage.setItem("last_result", JSON.stringify({ gen, season, result: data }));
 
-      // simpan ke History
       const parseIDR = (s: any) => Number(String(s ?? "0").replace(/[^0-9]/g, "")) || 0;
       const amount = parseIDR(data?.data?.estimasiBiaya?.total);
       const { addHistory } = await import("../pages/history/history");
@@ -226,37 +225,71 @@ function bindBackBtn(clearKey?: string) {
   app.addEventListener("click", handler);
 }
 
+
+function highlightBottomNav(root: HTMLElement = app) {
+  const current = (location.hash || "#/").replace(/^#/, "");
+  root.querySelectorAll<HTMLAnchorElement>('nav [data-nav]').forEach((a) => {
+    const href = (a.getAttribute("href") || "#/").replace(/^#/, "");
+    const isActive =
+      current === href ||
+      (current.startsWith("/history") && href === "/history") ||
+      (current === "/" && href === "/");
+    if (isActive) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+
+    a.classList.toggle("text-emerald-700", isActive);
+    a.classList.toggle("text-gray-600", !isActive);
+  });
+}
+
+
 function handleRoute() {
   removeOverlay();
+
   const path = getActivePathname();
   const seg = path.split("/").filter(Boolean);
 
   if (seg[0] === "result" && seg[1] && seg[2]) {
     const page = new ResultPage(seg[1] as Gen, seg[2] as Season);
-    app.replaceChildren(); app.innerHTML = page.render(); page.mount(app); return;
+    app.replaceChildren();
+    app.innerHTML = page.render();
+    page.mount(app);
+    highlightBottomNav(app);
+    return;
   }
+
   if (seg[0] === "calculator" && seg[1] && seg[2]) {
-    renderCalculator(seg[1] as Gen, seg[2] as Season); return;
+    renderCalculator(seg[1] as Gen, seg[2] as Season);
+    highlightBottomNav(app);
+    return;
   }
+
   if (seg[0] === "history") {
-  const page = new HistoryPage();
+    const page = new HistoryPage();
+    app.replaceChildren();
+    app.innerHTML = page.render();
+    page.mount(app);
+    highlightBottomNav(app);
+    return;
+  }
+
+if (getActiveRoute() === "/") {
+  const homePage = new Home();
   app.replaceChildren();
-  app.innerHTML = page.render();
-  page.mount(app);
+  app.innerHTML = homePage.render();
+
+  const byId = (id: string) => app.querySelector<HTMLButtonElement>(id);
+  byId("#btn-g0")?.addEventListener("click", () => renderSeasonPopup("G0"));
+  byId("#btn-g2")?.addEventListener("click", () => renderSeasonPopup("G2"));
+  byId("#btn-g3")?.addEventListener("click", () => renderSeasonPopup("G3"));
+  highlightBottomNav(app);
   return;
 }
 
-  if (getActiveRoute() === "/") {
-    const homePage = new Home();
-    app.replaceChildren(); app.innerHTML = homePage.render();
-    const byId = (id: string) => app.querySelector<HTMLButtonElement>(id);
-    byId("#btn-g0")?.addEventListener("click", () => renderSeasonPopup("G0"));
-    byId("#btn-g2")?.addEventListener("click", () => renderSeasonPopup("G2"));
-    byId("#btn-g3")?.addEventListener("click", () => renderSeasonPopup("G3"));
-  } else {
-    app.innerHTML = `<div class="p-6 text-center">404 - Halaman tidak ditemukan</div>`;
-  }
+  app.innerHTML = `<div class="p-6 text-center">404 - Halaman tidak ditemukan</div>`;
+  highlightBottomNav(app);
 }
+
 
 export function startRouter() {
   window.removeEventListener("hashchange", handleRoute);

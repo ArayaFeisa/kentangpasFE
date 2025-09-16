@@ -55,7 +55,6 @@ export const toIndoDate = (iso: string) => {
 export default class HistoryPage {
   render(): string {
     const items = getHistory();
-
     return `
     <div class="relative mx-auto max-w-md min-h-screen bg-[#F6F8FC]">
       <!-- Header -->
@@ -101,19 +100,19 @@ export default class HistoryPage {
       </main>
 
       <!-- Bottom Tabs -->
-      <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200" aria-label="Navigasi bawah">
-          <div class="flex justify-center gap-16 py-3">
-              <!-- Beranda -->
-              <a href="#/" data-nav class="flex flex-col items-center aria-[current=page]:text-emerald-700">
-                <img src="./icons/beranda1.svg" alt="Beranda" class="w-6 h-6" />
-              <span class="text-xs mt-1">Beranda</span>
-              </a>
-              <!-- History (selected on this page) -->
-              <a href="#/history" data-nav aria-current="page" class="flex flex-col items-center aria-[current=page]:text-emerald-700">
-                <img src="./icons/history1.svg" alt="History" class="w-6 h-6" />
-              <span class="text-xs mt-1">History</span>
-            </a>
-          </div>
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200" aria-label="Navigasi bawah">
+        <div class="flex justify-center gap-16 py-3">
+          <!-- Beranda (nonaktif di halaman ini) -->
+          <a href="#/" data-nav class="flex flex-col items-center text-gray-600">
+            <img src="./icons/beranda2.svg" alt="Beranda" class="w-6 h-6" />
+            <span class="text-xs mt-1">Beranda</span>
+          </a>
+          <!-- History (aktif di halaman ini) -->
+          <a href="#/history" data-nav aria-current="page" class="flex flex-col items-center text-emerald-700">
+            <img src="./icons/history2.svg" alt="History" class="w-6 h-6" />
+            <span class="text-xs mt-1">History</span>
+          </a>
+        </div>
       </nav>
     </div>`;
   }
@@ -130,9 +129,6 @@ export default class HistoryPage {
 
         location.hash = `/result/${item.gen}/${item.season}`;
       });
-    });
-    root.querySelector("#tab-home")?.addEventListener("click", () => {
-      location.hash = "/";
     });
   }
 }
