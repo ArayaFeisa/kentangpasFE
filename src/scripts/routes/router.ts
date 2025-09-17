@@ -225,7 +225,6 @@ function bindBackBtn(clearKey?: string) {
   app.addEventListener("click", handler);
 }
 
-
 function highlightBottomNav(root: HTMLElement = app) {
   const current = (location.hash || "#/").replace(/^#/, "");
   root.querySelectorAll<HTMLAnchorElement>('nav [data-nav]').forEach((a) => {
@@ -234,6 +233,7 @@ function highlightBottomNav(root: HTMLElement = app) {
       current === href ||
       (current.startsWith("/history") && href === "/history") ||
       (current === "/" && href === "/");
+
     if (isActive) a.setAttribute("aria-current", "page");
     else a.removeAttribute("aria-current");
 
@@ -241,7 +241,6 @@ function highlightBottomNav(root: HTMLElement = app) {
     a.classList.toggle("text-gray-600", !isActive);
   });
 }
-
 
 function handleRoute() {
   removeOverlay();
