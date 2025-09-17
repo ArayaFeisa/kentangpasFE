@@ -14,12 +14,7 @@ module.exports = merge(common, {
       clientsClaim: true,
       skipWaiting: true,
 
-      additionalManifestEntries: [
-        { url: "/offline.html", revision: "3" },
-        { url: "/index.html", revision: "3" },
-      ],
-
-      navigateFallback: "/offline.html",
+      navigateFallback: "/index.html",
       navigateFallbackDenylist: [/^\/api\//],
 
       runtimeCaching: [
@@ -42,6 +37,7 @@ module.exports = merge(common, {
         },
       ],
       cleanupOutdatedCaches: true,
+      sourcemap: false,
     }),
   ],
 });
