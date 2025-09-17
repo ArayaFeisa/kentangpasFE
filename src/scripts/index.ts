@@ -1,6 +1,6 @@
-// src/scripts/index.ts
 import "../styles/tailwind.css";
 import { startRouter } from "./routes/router";
+import { registerSW } from './sw-register';
 
-// Inisialisasi router sekali
 startRouter();
+registerSW();

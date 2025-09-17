@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start-dev": "webpack serve --config webpack.dev.cjs",
-    "build": "webpack --config webpack.prod.cjs"
+    "build": "webpack --config webpack.prod.cjs",
+    "serve:dist": "npx serve -s dist -l 5173"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.12",
@@ -22,6 +23,6 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4",
     "webpack-merge": "^5.10.0",
-    "workbox-webpack-plugin": "^7.0.0"
+    "workbox-webpack-plugin": "^7.3.0"
   }
 }
