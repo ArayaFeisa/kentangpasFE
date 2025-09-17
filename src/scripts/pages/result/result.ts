@@ -3,7 +3,6 @@ type Season = "Hujan" | "Kemarau";
 
 class ResultPage {
   constructor(private gen: Gen, private season: Season) {}
-
   render(): string {
     return `
       <div class="relative mx-auto max-w-md min-h-screen bg-[#F6F8FC]">
@@ -17,13 +16,11 @@ class ResultPage {
             </h1>
           </div>
         </header>
-
         <main class="px-5 py-5">
           <div id="rs-container"
                class="rounded-2xl border-2 border-green-500 bg-white p-5 shadow-sm">
             <!-- diisi saat mount -->
           </div>
-
           <div class="mt-6">
             <button id="btn-ok"
               class="w-full rounded-xl bg-green-600 px-4 py-3 text-white font-semibold shadow-sm
@@ -54,7 +51,6 @@ class ResultPage {
     const box = root.querySelector<HTMLDivElement>("#rs-container")!;
     box.innerHTML = `
       <h2 class="text-xl font-bold mb-4">Hasil Perhitungan</h2>
-
       <section class="space-y-2 mb-4">
         <h3 class="text-lg font-extrabold">A. Ringkasan Lahan Anda</h3>
         <p>Lebar 1 Unit (Guludan + Gerandul):
@@ -86,7 +82,6 @@ class ResultPage {
            <span class="text-green-600 font-extrabold">${d.estimasiBiaya.total}</span></p>
       </section>
     `;
-
     root.querySelector<HTMLButtonElement>("#btn-back")!
       .addEventListener("click", () => { location.hash = `/calculator/${this.gen}/${this.season}`; });
     root.querySelector<HTMLButtonElement>("#btn-ok")!

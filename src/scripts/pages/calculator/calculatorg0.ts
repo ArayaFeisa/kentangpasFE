@@ -1,21 +1,15 @@
 import { API_URL } from "../../../config/api";
-
 type Season = "Hujan" | "Kemarau";
-
 class CalculatorG0 {
   constructor(private season: Season, private resetSpacing = false) {}
-
   render(): string {
     const defaultJarak = this.season === "Hujan" ? 40 : 30;
     const rekomJarak =
       this.season === "Hujan"
         ? `Rekomendasi untuk Jarak Tanam untuk musim hujan ${defaultJarak} Cm`
         : `Rekomendasi untuk Jarak Tanam untuk musim kemarau ${defaultJarak} Cm`;
-
     return `
     <div class="mx-auto max-w-md min-h-screen bg-white relative">
-
-      <!-- App Bar -->
       <header class="sticky top-0 z-30 bg-[#F6F8FC] border-b border-gray-200">
         <div class="flex items-center gap-3 px-4 py-3">
           <button id="btn-back" type="button"
@@ -30,59 +24,43 @@ class CalculatorG0 {
           </h1>
         </div>
       </header>
-
-      <!-- Konten + Leaf -->
       <div class="relative overflow-hidden">
         <main class="relative z-10 px-5 pt-5 pb-28">
           <h2 class="text-base font-extrabold text-gray-900 mb-2 text-center">
           Ukuran Lahan
           </h2>
-
           <form id="calculator-form" class="mt-4 space-y-4">
-            <!-- Panjang -->
             <div>
               <label for="panjang" class="block text-sm font-medium text-gray-800">Panjang Lahan (m) :</label>
               <input id="panjang" name="panjang" type="number" step="0.01" inputmode="decimal" min="0"
                 class="mt-1 block w-full rounded-lg border border-gray-300 bg-[#F6FBF3] px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A46E2D]/30" />
             </div>
-
-            <!-- Lebar -->
             <div>
               <label for="lebar" class="block text-sm font-medium text-gray-800">Lebar Lahan (m) :</label>
               <input id="lebar" name="lebar" type="number" step="0.01" inputmode="decimal" min="0"
                 class="mt-1 block w-full rounded-lg border border-gray-300 bg-[#F6FBF3] px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A46E2D]/30" />
             </div>
-
-            <!-- Lebar Guludan -->
             <div>
               <label for="guludan" class="block text-sm font-medium text-gray-800">Lebar Guludan (cm) :</label>
               <input id="guludan" name="guludan" type="number" inputmode="numeric" min="0" value="80"
                 class="mt-1 block w-full rounded-lg border border-gray-300 bg-[#F6FBF3] px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A46E2D]/30" />
             </div>
-
-            <!-- Lebar Gerandul / Parit -->
             <div>
               <label for="gerandul" class="block text-sm font-medium text-gray-800">Lebar Gerandul / Parit (cm) :</label>
               <input id="gerandul" name="gerandul" type="number" inputmode="numeric" min="0" value="40"
                 class="mt-1 block w-full rounded-lg border border-gray-300 bg-[#F6FBF3] px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A46E2D]/30" />
             </div>
-
-            <!-- Jarak Tanam -->
             <div>
               <label for="jarak_tanam" class="block text-sm font-medium text-gray-800">Jarak Tanam :</label>
               <input id="jarak_tanam" name="jarak_tanam" type="number" inputmode="numeric" min="0" value="${defaultJarak}"
                 class="mt-1 block w-full rounded-lg border border-gray-300 bg-[#F6FBF3] px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A46E2D]/30" />
               <p class="text-xs text-gray-500 italic mt-2 leading-snug">${rekomJarak}</p>
             </div>
-
-            <!-- Harga Bibit per Biji -->
             <div>
               <label for="harga_bibit" class="block text-sm font-medium text-gray-800">Harga bibit G0 per Biji :</label>
               <input id="harga_bibit" name="harga_bibit" type="number" inputmode="decimal" min="0"
                 class="mt-1 block w-full rounded-lg border border-gray-300 bg-[#F6FBF3] px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A46E2D]/30" />
             </div>
-
-            <!-- CTA -->
             <div class="pt-1 mt-8">
               <button type="submit"
                 class="w-auto mx-auto block rounded-xl bg-[#D08928] px-4 py-3 text-white font-semibold shadow-sm hover:brightness-105 active:brightness-110 focus:outline-none focus:ring-4 focus:ring-[#D08928]/30">
@@ -91,8 +69,6 @@ class CalculatorG0 {
             </div>
           </form>
         </main>
-
-        <!-- Leaf -->
         <div aria-hidden="true" class="pointer-events-none select-none absolute right-[-8px] -bottom-16 w-[200px] z-0">
           <svg width="225" height="252" viewBox="0 0 225 252" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0.384566 38.3999C77.5216 41.9583 106.706 57.2634 106.857 136.582C106.857 136.582 116.156 130.491 99.8755 144C83.5954 157.508 -6.59733 141.818 0.384566 38.3999Z" fill="#49A939"/>

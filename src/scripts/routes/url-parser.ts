@@ -25,31 +25,26 @@ function constructRouteFromSegments(pathSegments: PathSegments): string {
   return pathname || "/";
 }
 
-// path aktif (tanpa hash #)
 export function getActivePathname(): string {
   return window.location.hash.replace("#", "") || "/";
 }
 
-// route aktif dalam format /resource/:id
 export function getActiveRoute(): string {
   const pathname = getActivePathname();
   const urlSegments = extractPathnameSegments(pathname);
   return constructRouteFromSegments(urlSegments);
 }
 
-// segment aktif
 export function parseActivePathname(): PathSegments {
   const pathname = getActivePathname();
   return extractPathnameSegments(pathname);
 }
 
-// route dari pathname tertentu
 export function getRoute(pathname: string): string {
   const urlSegments = extractPathnameSegments(pathname);
   return constructRouteFromSegments(urlSegments);
 }
 
-// segment dari pathname tertentu
 export function parsePathname(pathname: string): PathSegments {
   return extractPathnameSegments(pathname);
 }

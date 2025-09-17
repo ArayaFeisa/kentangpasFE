@@ -1,6 +1,5 @@
 export type Gen = "G0" | "G2" | "G3";
 export type Season = "Hujan" | "Kemarau";
-
 export type HistoryItem = {
   id: string;
   gen: Gen;
@@ -9,7 +8,6 @@ export type HistoryItem = {
   dateISO: string;
   resultPayload: unknown;
 };
-
 const HISTORY_KEY = "calc_history_v1";
 
 export function getHistory(): HistoryItem[] {
@@ -63,7 +61,6 @@ export default class HistoryPage {
 
   return `
   <div class="relative mx-auto max-w-md min-h-screen bg-[#F6F8FC]">
-    <!-- Header -->
     <header class="sticky top-0 z-30 bg-white/90 border-b border-gray-200 backdrop-blur">
       <div class="flex items-center gap-3 px-4 py-3">
         <div class="grid h-8 w-8 place-items-center rounded-xl bg-emerald-50">
@@ -77,8 +74,6 @@ export default class HistoryPage {
         </div>
       </div>
     </header>
-
-    <!-- Content -->
     <main class="px-4 py-4 pb-28">
       <div class="space-y-3" id="history-list">
         ${
@@ -92,8 +87,6 @@ export default class HistoryPage {
                   Estimasi Biaya <span class="font-semibold text-emerald-700">${toIDR(it.amount)}</span>
                 </div>
                 <div class="absolute bottom-3 right-4 text-[10px] text-emerald-700/70">${toIndoDate(it.dateISO)}</div>
-
-                <!-- Actions (lihat & hapus) -->
                 <div class="absolute right-3 top-3 flex items-center gap-2">
                   <button type="button" data-view="${it.id}"
                           class="grid h-8 w-8 place-items-center rounded-full bg-white/70 backdrop-blur hover:bg-white"
@@ -117,8 +110,6 @@ export default class HistoryPage {
         }
       </div>
     </main>
-
-    <!-- Bottom Tabs (pakai ikon set '2') -->
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-white border-t border-gray-200" aria-label="Navigasi bawah">
       <div class="flex justify-center gap-16 py-3">
         <a href="#/" data-nav class="flex flex-col items-center text-gray-600">
@@ -144,7 +135,6 @@ mount(root: HTMLElement) {
         const id = delBtn.getAttribute("data-del")!;
         if (!confirm("Hapus riwayat ini?")) return;
         removeHistory(id);
-
         delBtn.closest<HTMLElement>("[data-card]")?.remove();
         if (!listEl.querySelector("[data-card]")) {
           listEl.innerHTML = `<div class="text-center text-sm text-gray-500 py-10">Belum ada riwayat perhitungan.</div>`;

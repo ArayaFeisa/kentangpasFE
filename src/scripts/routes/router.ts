@@ -5,6 +5,7 @@ import CalculatorG2 from "../pages/calculator/calculatorg2";
 import CalculatorG3 from "../pages/calculator/calculatorg3";
 import ResultPage from "../pages/result/result";
 import HistoryPage from "../pages/history/history";
+import SplashPage from "../pages/splash/splash"; 
 
 type Gen = "G0" | "G2" | "G3";
 type Season = "Hujan" | "Kemarau";
@@ -231,9 +232,9 @@ function highlightBottomNav(root: HTMLElement = app) {
     const href = (a.getAttribute("href") || "#/").replace(/^#/, "");
     const isActive =
       current === href ||
-      (current.startsWith("/history") && href === "/history") ||
-      (current === "/" && href === "/");
-
+      ((current === "/home" || current === "/") && (href === "/" || href === "/home")) ||
+      (current.startsWith("/history") && href === "/history");
+      
     if (isActive) a.setAttribute("aria-current", "page");
     else a.removeAttribute("aria-current");
 
@@ -273,17 +274,30 @@ function handleRoute() {
   }
 
 if (getActiveRoute() === "/") {
-  const homePage = new Home();
-  app.replaceChildren();
-  app.innerHTML = homePage.render();
-
-  const byId = (id: string) => app.querySelector<HTMLButtonElement>(id);
-  byId("#btn-g0")?.addEventListener("click", () => renderSeasonPopup("G0"));
-  byId("#btn-g2")?.addEventListener("click", () => renderSeasonPopup("G2"));
-  byId("#btn-g3")?.addEventListener("click", () => renderSeasonPopup("G3"));
-  highlightBottomNav(app);
-  return;
+  if (!localStorage.getItem("splashShown")) {
+    localStorage.setItem("splashShown", "true");
+    const splash = new SplashPage();
+    app.replaceChildren();
+    app.innerHTML = splash.render();
+    splash.mount();
+    return;
+  } else {
+    location.hash = "/home";
+    return;
+  }
 }
+  if (seg[0] === "home") {
+    const homePage = new Home();
+    app.replaceChildren();
+    app.innerHTML = homePage.render();
+
+    const byId = (id: string) => app.querySelector<HTMLButtonElement>(id);
+    byId("#btn-g0")?.addEventListener("click", () => renderSeasonPopup("G0"));
+    byId("#btn-g2")?.addEventListener("click", () => renderSeasonPopup("G2"));
+    byId("#btn-g3")?.addEventListener("click", () => renderSeasonPopup("G3"));
+    highlightBottomNav(app);
+    return;
+  }
 
   app.innerHTML = `<div class="p-6 text-center">404 - Halaman tidak ditemukan</div>`;
   highlightBottomNav(app);
