@@ -117,7 +117,7 @@ export function showResultOverlay(data: CalcResponse) {
     closeResultOverlay();
     const from = sessionStorage.getItem("result_from");
     sessionStorage.removeItem("result_from");
-    sessionStorage.removeItem("result_prev_hash");
+    sessionStorage.removeItem("last_result");
     if (from === "history") {
       location.replace("#/history");
     } else {

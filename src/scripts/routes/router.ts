@@ -213,7 +213,6 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
         resultPayload: data,
       });
       sessionStorage.setItem("result_from", "calculator");
-      sessionStorage.setItem("result_prev_hash", location.hash || `#/calculator/${gen}/${season}`);
       location.hash = `/result/${gen}/${season}`;
     } catch (err: any) {
       const oo = ensureOverlay();

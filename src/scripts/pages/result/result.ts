@@ -82,10 +82,19 @@ class ResultPage {
            <span class="text-green-600 font-extrabold">${d.estimasiBiaya.total}</span></p>
       </section>
     `;
-    root.querySelector<HTMLButtonElement>("#btn-back")!
-      .addEventListener("click", () => { location.hash = `/calculator/${this.gen}/${this.season}`; });
-    root.querySelector<HTMLButtonElement>("#btn-ok")!
-      .addEventListener("click", () => { location.hash = `/calculator/${this.gen}/${this.season}`; });
+    const okBtn = root.querySelector<HTMLButtonElement>("#btn-ok")!;
+    okBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const from = sessionStorage.getItem("result_from");
+      sessionStorage.removeItem("result_from");
+      sessionStorage.removeItem("last_result");
+
+      if (from === "history") {
+        location.replace("#/history");
+      } else {
+        location.replace("#/home");
+      }
+    });
   }
 }
 
