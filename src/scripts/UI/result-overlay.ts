@@ -115,12 +115,13 @@ export function showResultOverlay(data: CalcResponse) {
   `;
   o.querySelector<HTMLButtonElement>("#btn-ok")?.addEventListener("click", () => {
     closeResultOverlay();
-    const fromHistory = sessionStorage.getItem("result_from") === "history";
-    if (fromHistory) {
-      sessionStorage.removeItem("result_from");
-      location.hash = "/history";   
+    const from = sessionStorage.getItem("result_from");
+    sessionStorage.removeItem("result_from");
+    sessionStorage.removeItem("result_prev_hash");
+    if (from === "history") {
+      location.replace("#/history");
     } else {
-      location.hash = "/home";
+      location.replace("#/home");
     }
   });
 }

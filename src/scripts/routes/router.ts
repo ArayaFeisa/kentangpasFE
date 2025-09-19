@@ -4,7 +4,7 @@ import CalculatorG0 from "../pages/calculator/calculatorg0";
 import CalculatorG2 from "../pages/calculator/calculatorg2";
 import CalculatorG3 from "../pages/calculator/calculatorg3";
 import ResultPage from "../pages/result/result";
-import HistoryPage from "../pages/history/history";
+import HistoryPage from "../pages/history/histosry";
 import SplashPage from "../pages/splash/splash"; 
 
 type Gen = "G0" | "G2" | "G3";
@@ -212,7 +212,8 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
         dateISO: new Date().toISOString().slice(0, 10),
         resultPayload: data,
       });
-
+      sessionStorage.setItem("result_from", "calculator");
+      sessionStorage.setItem("result_prev_hash", location.hash || `#/calculator/${gen}/${season}`);
       location.hash = `/result/${gen}/${season}`;
     } catch (err: any) {
       const oo = ensureOverlay();
@@ -272,14 +273,45 @@ function handleRoute() {
   const path = getActivePathname();
   const seg = path.split("/").filter(Boolean);
 
-  if (seg[0] === "result" && seg[1] && seg[2]) {
-    const page = new ResultPage(seg[1] as Gen, seg[2] as Season);
-    app.replaceChildren();
-    app.innerHTML = page.render();
-    page.mount(app);
-    highlightBottomNav(app);
-    return;
+if (seg[0] === "result" && seg[1] && seg[2]) {
+  const prevBack = (app as any)._backHandler as ((e: MouseEvent) => void) | undefined;
+  if (prevBack) {
+    app.removeEventListener("click", prevBack);
+    (app as any)._backHandler = undefined;
   }
+  const page = new ResultPage(seg[1] as Gen, seg[2] as Season);
+  app.replaceChildren();
+  app.innerHTML = page.render();
+  page.mount(app);
+  const backBtn = app.querySelector<HTMLButtonElement>("#btn-back");
+  backBtn?.addEventListener("click", (e) => {
+    e.preventDefault();
+    const prevHash = sessionStorage.getItem("result_prev_hash");
+    const from     = sessionStorage.getItem("result_from");
+
+    sessionStorage.removeItem("result_prev_hash");
+    sessionStorage.removeItem("result_from");
+
+    if (prevHash) {
+      location.hash = prevHash.replace(/^#/, "");
+      return;
+    }
+
+    if (from === "history") {
+      location.hash = "/history";
+    } else if (from === "calculator") {
+      location.hash = `/calculator/${seg[1]}/${seg[2]}`;
+    } else if (history.length > 1) {
+      history.back();
+    } else {
+      location.hash = "/home";
+    }
+  });
+
+  highlightBottomNav(app);
+  return;
+}
+
 
   if (seg[0] === "calculator" && seg[1] && seg[2]) {
     renderCalculator(seg[1] as Gen, seg[2] as Season);

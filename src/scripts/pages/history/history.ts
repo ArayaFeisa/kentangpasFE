@@ -140,6 +140,7 @@ mount(root: HTMLElement) {
         if (!item) return;
         sessionStorage.setItem("last_result", JSON.stringify({ gen: item.gen, season: item.season, result: item.resultPayload }));
         sessionStorage.setItem("result_from", "history");
+        sessionStorage.setItem("result_prev_hash", location.hash || "#/history");
         location.hash = `/result/${item.gen}/${item.season}`;
       }
     });
