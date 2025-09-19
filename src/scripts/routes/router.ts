@@ -4,7 +4,7 @@ import CalculatorG0 from "../pages/calculator/calculatorg0";
 import CalculatorG2 from "../pages/calculator/calculatorg2";
 import CalculatorG3 from "../pages/calculator/calculatorg3";
 import ResultPage from "../pages/result/result";
-import HistoryPage from "../pages/history/histosry";
+import HistoryPage from "../pages/history/history";
 import SplashPage from "../pages/splash/splash"; 
 
 type Gen = "G0" | "G2" | "G3";
