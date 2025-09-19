@@ -76,7 +76,7 @@ function renderSpacingPopup(gen: Gen, season: Season) {
     </div>
   `;
   o.querySelector("#btn-setuju")?.addEventListener("click", () => { removeOverlay(); renderCalculator(gen, season); });
-  o.querySelector("#btn-batal")?.addEventListener("click", () => { removeOverlay(); renderCalculator(gen, season, true); });
+  o.querySelector("#btn-batal")?.addEventListener("click", () => { removeOverlay(); location.hash = "/home"; });
   enableEscToClose();
 }
 
@@ -121,12 +121,35 @@ function renderCalculator(gen: Gen, season: Season, resetSpacing = false) {
   formEl.addEventListener("change", save);
       formEl.addEventListener("submit", async (e) => {
     e.preventDefault();
+  const priceSel = gen === "G0" ? "#harga_bibit" : "#harga_perkg";
+  const requiredSel = ["#panjang", "#lebar", "#guludan", "#gerandul", "#jarak_tanam", priceSel];
+
+  const getRaw = (sel: string) =>
+    (formEl.querySelector<HTMLInputElement>(sel)?.value ?? "").toString().trim();
+
+  const firstEmptySel = requiredSel.find(sel => getRaw(sel) === "");
+  if (firstEmptySel) {
+    const o = ensureOverlay();
+    o.innerHTML = `
+      <div class="bg-white rounded-2xl p-6 shadow-lg w-[90%] max-w-md animate-scale-in">
+        <h3 class="text-lg font-semibold text-red-600">Gagal</h3>
+        <p class="mt-2 text-sm text-gray-700">Semua kolom wajib diisi.</p>
+        <div class="mt-6 text-right">
+          <button id="btn-close-error" class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300">Tutup</button>
+        </div>
+      </div>`;
+    o.querySelector("#btn-close-error")?.addEventListener("click", () => {
+      removeOverlay();
+      formEl.querySelector<HTMLInputElement>(firstEmptySel)?.focus(); // opsional: fokus ke yang kosong
+    });
+    enableEscToClose();
+    return;
+  }
 
     const readNum = (sel: string) =>
       Number((formEl.querySelector<HTMLInputElement>(sel)?.value || "0")
         .toString()
         .replace(",", "."));
-
     const base = {
       panjangLahan: readNum("#panjang"),
       lebarLahan: readNum("#lebar"),
@@ -274,8 +297,8 @@ function handleRoute() {
   }
 
 if (getActiveRoute() === "/") {
-  if (!localStorage.getItem("splashShown")) {
-    localStorage.setItem("splashShown", "true");
+  if (!sessionStorage.getItem("splashShown")) {
+    sessionStorage.setItem("splashShown", "true");
     const splash = new SplashPage();
     app.replaceChildren();
     app.innerHTML = splash.render();

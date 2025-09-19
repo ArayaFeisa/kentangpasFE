@@ -113,8 +113,14 @@ export function showResultOverlay(data: CalcResponse) {
       </div>
     </div>
   `;
-
-  o.querySelector<HTMLButtonElement>("#btn-ok")?.addEventListener("click", closeResultOverlay);
-  enableEscToClose();
-  focusFirst(o);
+  o.querySelector<HTMLButtonElement>("#btn-ok")?.addEventListener("click", () => {
+    closeResultOverlay();
+    const fromHistory = sessionStorage.getItem("result_from") === "history";
+    if (fromHistory) {
+      sessionStorage.removeItem("result_from");
+      location.hash = "/history";   
+    } else {
+      location.hash = "/home";
+    }
+  });
 }

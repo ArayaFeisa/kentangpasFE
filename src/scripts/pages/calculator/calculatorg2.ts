@@ -34,7 +34,7 @@ class CalculatorG2 {
             <div>
               <label for="panjang" class="block text-sm font-medium text-gray-800">Panjang Lahan (m) :</label>
               <input id="panjang" name="panjang" type="number" step="0.01" inputmode="decimal" min="0"
-                class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900
+                class="mt-1 block w-full rounded-lg border border-gray-300 bg-[#F6FBF3] px-3 py-2 text-gray-900
                        focus:border-gray-400 focus:outline-none focus:ring-2 focus:ring-[#A46E2D]/30" />
             </div>
             <div>

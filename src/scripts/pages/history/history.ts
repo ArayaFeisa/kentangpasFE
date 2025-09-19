@@ -87,23 +87,15 @@ export default class HistoryPage {
                   Estimasi Biaya <span class="font-semibold text-emerald-700">${toIDR(it.amount)}</span>
                 </div>
                 <div class="absolute bottom-3 right-4 text-[10px] text-emerald-700/70">${toIndoDate(it.dateISO)}</div>
-                <div class="absolute right-3 top-3 flex items-center gap-2">
-                  <button type="button" data-view="${it.id}"
-                          class="grid h-8 w-8 place-items-center rounded-full bg-white/70 backdrop-blur hover:bg-white"
-                          aria-label="Lihat detail">
-                    <svg class="h-4 w-4 text-emerald-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7Z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  </button>
-                  <button type="button" data-del="${it.id}"
-                          class="grid h-8 w-8 place-items-center rounded-full bg-white/70 backdrop-blur hover:bg-white"
-                          aria-label="Hapus dari history">
-                    <svg class="h-4 w-4 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0v14m4-14v14m4-14v14"/>
-                    </svg>
-                  </button>
-                </div>
+               <div class="absolute right-3 top-3">
+  <button type="button" data-del="${it.id}"
+          class="grid h-8 w-8 place-items-center rounded-full bg-white/70 backdrop-blur hover:bg-white"
+          aria-label="Hapus dari history">
+    <svg class="h-4 w-4 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v1M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0v14m4-14v14m4-14v14"/>
+    </svg>
+  </button>
+</div>
               </div>
             `).join("")
             : `<div class="text-center text-sm text-gray-500 py-10">Belum ada riwayat perhitungan.</div>`
@@ -147,6 +139,7 @@ mount(root: HTMLElement) {
         const item = getHistory().find((x) => x.id === id);
         if (!item) return;
         sessionStorage.setItem("last_result", JSON.stringify({ gen: item.gen, season: item.season, result: item.resultPayload }));
+        sessionStorage.setItem("result_from", "history");
         location.hash = `/result/${item.gen}/${item.season}`;
       }
     });
@@ -159,6 +152,7 @@ mount(root: HTMLElement) {
       const item = getHistory().find((x) => x.id === id);
       if (!item) return;
       sessionStorage.setItem("last_result", JSON.stringify({ gen: item.gen, season: item.season, result: item.resultPayload }));
+      sessionStorage.setItem("result_from", "history");
       location.hash = `/result/${item.gen}/${item.season}`;
     });
   }
