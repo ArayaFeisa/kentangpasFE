@@ -6,6 +6,8 @@ import CalculatorG3 from "../pages/calculator/calculatorg3";
 import ResultPage from "../pages/result/result";
 import HistoryPage from "../pages/history/history";
 import SplashPage from "../pages/splash/splash"; 
+import CalculatorReversePresenter from "../pages/calculator/calculator-reverse-presenter";
+
 
 type Gen = "G0" | "G2" | "G3";
 type Season = "Hujan" | "Kemarau";
@@ -311,7 +313,6 @@ if (seg[0] === "result" && seg[1] && seg[2]) {
   return;
 }
 
-
   if (seg[0] === "calculator" && seg[1] && seg[2]) {
     renderCalculator(seg[1] as Gen, seg[2] as Season);
     highlightBottomNav(app);
@@ -324,6 +325,22 @@ if (seg[0] === "result" && seg[1] && seg[2]) {
     app.innerHTML = page.render();
     page.mount(app);
     highlightBottomNav(app);
+    return;
+  }
+
+  if (seg[0] === "reverse") {
+    // support: #/reverse/G0/Kemarau
+    if (seg[1] && seg[2]) {
+      const gen = seg[1] as Gen;
+      const season = seg[2] as Season;
+      const presenter = new CalculatorReversePresenter(gen, season);
+      presenter.init();
+      highlightBottomNav(app);
+      return;
+    }
+
+    // redirect jika buka #/reverse tanpa parameter
+    location.hash = "/reverse/G0/Kemarau";
     return;
   }
 
