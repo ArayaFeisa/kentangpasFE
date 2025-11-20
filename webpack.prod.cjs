@@ -2,10 +2,16 @@ const { merge } = require("webpack-merge");
 const common = require("./webpack.common.cjs");
 const webpack = require("webpack");
 const { GenerateSW } = require("workbox-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = merge(common, {
   mode: "production",
   plugins: [
+    new Dotenv({
+      path: "./.env.production",
+      safe: false,
+      systemvars: true,
+    }),
     new webpack.DefinePlugin({
       "process.env.NODE_ENV": JSON.stringify("production"),
     }),
@@ -19,10 +25,10 @@ module.exports = merge(common, {
 
       runtimeCaching: [
         {
-          urlPattern: ({ url }) => url.origin === "https://apikentangpas.cloud",
+          urlPattern: ({ url }) => url.origin === "http://api-bibitku.filkom.ub.ac.id",
           handler: "NetworkFirst",
           options: {
-            cacheName: "api-kentangpas",
+            cacheName: "api-bibitku",
             networkTimeoutSeconds: 12,
             expiration: { maxEntries: 50, maxAgeSeconds: 3600 },
             cacheableResponse: { statuses: [0, 200] },

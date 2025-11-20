@@ -2,7 +2,8 @@ import CalculatorReverse, {
   ReverseCalcRequestPayload,
   ReverseCalcResponsePayload,
 } from "./calculator-reverse";
-import { API_URL } from "../../../config/api";
+import { API_ENDPOINTS } from "../../../config/api";
+import { apiPost } from "../../../utils/api-helper";
 
 class CalculatorReversePresenter {
   private formEl: HTMLFormElement | null = null;
@@ -95,21 +96,19 @@ class CalculatorReversePresenter {
     try {
       this._showLoading();
 
-      const res = await fetch(`${API_URL}/calculator/reverse`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const response = await apiPost<ReverseCalcResponsePayload>(
+        API_ENDPOINTS.CALCULATOR.REVERSE,
+        payload
+      );
 
-      const result: ReverseCalcResponsePayload = await res.json();
       this._hideLoading();
 
-      if (!res.ok || !result.data) {
-        throw new Error(result.message || "Gagal menghitung estimasi.");
+      if (!response.success || !response.data) {
+        throw new Error(response.error || "Gagal menghitung estimasi.");
       }
 
       this._showAlert("Perhitungan berhasil!", "success");
-      this._renderResult(result.data);
+      this._renderResult(response.data.data);
     } catch (err) {
       this._hideLoading();
       this._showAlert((err as Error).message, "error");
