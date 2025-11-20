@@ -28,7 +28,7 @@ class CalculatorG2 {
       <div class="relative overflow-hidden">
         <main class="relative z-10 px-5 pt-5 pb-28">
           <h2 class="text-base font-extrabold text-gray-900 mb-2 text-center">
-            Ukuran Lahan
+            Estimasi Jumlah Bibit Berdasarkan Luas
           </h2>
           <form id="calculator-form" class="mt-4 space-y-4">
             <div>

@@ -6,7 +6,6 @@ export default class SplashPage {
         class="relative h-screen w-screen overflow-hidden bg-neutral-background font-sans animate-scale-in
                pt-[calc(env(safe-area-inset-top)+12px)]"
       >
-        <!-- === Blob per-sudut sesuai permintaan === -->
         <img src="/icons/splash1.svg" alt="" class="pointer-events-none select-none absolute top-0 left-0 w-[70%] opacity-80" draggable="false" />
         <img src="/icons/splash2.svg" alt="" class="pointer-events-none select-none absolute top-0 right-0 w-[70%] opacity-80" draggable="false" />
         <img src="/icons/splash3.svg" alt="" class="pointer-events-none select-none absolute bottom-0 left-0 w-[70%] opacity-80" draggable="false" />

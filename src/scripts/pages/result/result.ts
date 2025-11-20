@@ -19,7 +19,6 @@ class ResultPage {
         <main class="px-5 py-5">
           <div id="rs-container"
                class="rounded-2xl border-2 border-green-500 bg-white p-5 shadow-sm">
-            <!-- diisi saat mount -->
           </div>
           <div class="mt-6">
             <button id="btn-ok"

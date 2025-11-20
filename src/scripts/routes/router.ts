@@ -50,35 +50,55 @@ function renderSeasonPopup(gen: Gen) {
   o.innerHTML = `
     <div class="bg-white rounded-2xl p-6 shadow-lg w-80 text-center relative animate-scale-in">
       <button id="close-popup" class="absolute top-2 right-3 text-gray-500 hover:text-gray-800">✕</button>
-      <h2 class="text-lg font-bold mb-4">Musim Tanam? 🌤️</h2>
-      <div class="flex gap-3 justify-center">
+      <h2 class="text-lg font-bold mb-4">Musim Tanam? 🌾</h2>
+      <div class="flex gap-3 justify-center mb-6">
         <button id="btn-kemarau" class="flex-1 bg-yellow-400 text-white font-bold py-2 rounded-lg">Musim Kemarau</button>
         <button id="btn-hujan" class="flex-1 bg-blue-500 text-white font-bold py-2 rounded-lg">Musim Hujan</button>
       </div>
-    </div>
-  `;
-  o.querySelector("#close-popup")?.addEventListener("click", removeOverlay);
-  o.querySelector("#btn-kemarau")?.addEventListener("click", () => { removeOverlay(); renderSpacingPopup(gen,"Kemarau"); });
-  o.querySelector("#btn-hujan")?.addEventListener("click", () => { removeOverlay(); renderSpacingPopup(gen,"Hujan"); });
-  enableEscToClose();
-}
-function renderSpacingPopup(gen: Gen, season: Season) {
-  const o = ensureOverlay();
-  const spacing = season === "Hujan" ? "40 cm x 40 cm" : "30 cm x 30 cm";
-  o.innerHTML = `
-    <div class="bg-white rounded-2xl p-6 shadow-lg w-80 text-center relative animate-scale-in border-2 border-green-500">
-      <p class="text-black font-bold mb-6">
-        <span class="inline-block text-yellow-500 mr-2">⚠️</span>
-        Jarak Tanam menjadi ${spacing}.
-      </p>
-      <div class="flex gap-3 justify-center">
-        <button id="btn-setuju" class="flex-1 bg-green-600 text-white font-bold py-2 rounded-lg">Setuju</button>
-        <button id="btn-batal" class="flex-1 bg-gray-300 text-gray-700 font-bold py-2 rounded-lg">Batalkan</button>
+      <h2 class="text-lg font-bold mb-4">Pilih Jenis Estimasi 📊</h2>
+      <div class="flex flex-col gap-3">
+        <button id="btn-luas-lahan" class="bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition">Estimasi Luas Lahan</button>
+        <button id="btn-jumlah-bibit" class="bg-emerald-500 text-white font-bold py-3 rounded-lg hover:bg-emerald-600 transition">Estimasi Jumlah Bibit</button>
       </div>
     </div>
   `;
-  o.querySelector("#btn-setuju")?.addEventListener("click", () => { removeOverlay(); renderCalculator(gen, season); });
-  o.querySelector("#btn-batal")?.addEventListener("click", () => { removeOverlay(); location.hash = "/home"; });
+
+  let selectedSeason: Season | null = null;
+
+  const btnKemarau = o.querySelector("#btn-kemarau") as HTMLButtonElement;
+  const btnHujan = o.querySelector("#btn-hujan") as HTMLButtonElement;
+  const btnLuasLahan = o.querySelector("#btn-luas-lahan") as HTMLButtonElement;
+  const btnJumlahBibit = o.querySelector("#btn-jumlah-bibit") as HTMLButtonElement;
+
+  const updateSeasonSelection = (season: Season, selectedBtn: HTMLButtonElement, otherBtn: HTMLButtonElement) => {
+    selectedSeason = season;
+    selectedBtn.classList.add("ring-4", "ring-offset-2");
+    selectedBtn.classList.add(season === "Kemarau" ? "ring-yellow-300" : "ring-blue-300");
+    otherBtn.classList.remove("ring-4", "ring-offset-2", "ring-yellow-300", "ring-blue-300");
+  };
+
+  btnKemarau.addEventListener("click", () => updateSeasonSelection("Kemarau", btnKemarau, btnHujan));
+  btnHujan.addEventListener("click", () => updateSeasonSelection("Hujan", btnHujan, btnKemarau));
+
+  btnLuasLahan.addEventListener("click", () => {
+    if (!selectedSeason) {
+      alert("Pilih musim tanam terlebih dahulu!");
+      return;
+    }
+    removeOverlay();
+    location.hash = `/reverse/${gen}/${selectedSeason}`;
+  });
+
+  btnJumlahBibit.addEventListener("click", () => {
+    if (!selectedSeason) {
+      alert("Pilih musim tanam terlebih dahulu!");
+      return;
+    }
+    removeOverlay();
+    renderCalculator(gen, selectedSeason);
+  });
+
+  o.querySelector("#close-popup")?.addEventListener("click", removeOverlay);
   enableEscToClose();
 }
 
@@ -329,7 +349,6 @@ if (seg[0] === "result" && seg[1] && seg[2]) {
   }
 
   if (seg[0] === "reverse") {
-    // support: #/reverse/G0/Kemarau
     if (seg[1] && seg[2]) {
       const gen = seg[1] as Gen;
       const season = seg[2] as Season;
@@ -339,7 +358,6 @@ if (seg[0] === "result" && seg[1] && seg[2]) {
       return;
     }
 
-    // redirect jika buka #/reverse tanpa parameter
     location.hash = "/reverse/G0/Kemarau";
     return;
   }
