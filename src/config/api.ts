@@ -15,12 +15,6 @@ export const API_ENDPOINTS = {
     REVERSE: `${API_BASE_URL}/api/calculator/reverse`,
     BASE: `${API_BASE_URL}/api/calculator`,
   },
-
-  // Articles endpoints
-  ARTICLES: {
-    LIST: `${API_BASE_URL}/api/articles`,
-    DETAIL: (id: string) => `${API_BASE_URL}/api/articles/${id}`,
-  },
 };
 
 // Legacy export for backward compatibility
