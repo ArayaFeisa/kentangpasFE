@@ -6,8 +6,8 @@ class Home {
           <h1 class="text-3xl font-bold text-black mb-2">Halo</h1>
           <p class="text-black font-bold mb-1">
             <span>Selamat Datang di</span>
-            <span class="font-extrabold text-[#D18E27]">KENTANG</span>
-            <span class="font-extrabold text-[#49A939]">PAS!</span>
+            <span class="font-extrabold text-[#D18E27]">BIBIT</span>
+            <span class="font-extrabold text-[#49A939]">KU!</span>
           </p>
           <p class="text-black font-medium">Kalkulator Cerdas Berbasis Guludan</p>
           <p class="text-gray-600 text-sm mt-1">Pilih Kategori</p>
